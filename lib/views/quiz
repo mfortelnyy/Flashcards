@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+import './../models/flashcard.dart';
+import './../utils/database_helper.dart';
+
+
+class Quiz extends StatefulWidget {
+  final int? deckId;
+
+  Quiz({required this.deckId});
+  
+  @override
+  _QuizState createState() => _QuizState();
+}
+
+class _QuizState extends State<Quiz> {
+  
+  int currentIndex = 0;
+  bool showAnswer = false;
+  Set<int> peakedFlashcards = {};
+  int seenFlashcards = 1;
+  List<Flashcard> flashcards = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadFlashcards();
+  }
+
+  void loadFlashcards() async {
+    if (widget.deckId != null) {
+      flashcards = await DBHelper().queryFlashcards(widget.deckId);
+      if (flashcards.isNotEmpty) {
+        setState(() {});
+      }
+    }
+    //each time play is pressed the order will be randomized
+    flashcards.shuffle();
+  }
+  
+   void _nextFlashcard() {
+    if(seenFlashcards < flashcards.length){
+      seenFlashcards++;
+
+    }
+    if (currentIndex < flashcards.length - 1) {
+      currentIndex++;
+    }
+    if(currentIndex == flashcards.length-1){
+      currentIndex == 0;
+    }
+
+    showAnswer = false;
+
+    setState(() {});
+  }
+
+  void _previousFlashcard() {
+    if (currentIndex > 0) {
+      currentIndex--;
+    }
+    showAnswer = false;
+
+    setState(() {});
+  }
+
+  
+
+  @override
+  Widget build(BuildContext context) {
+    if (flashcards.isEmpty) {
+    return const Center(
+      child: Text("No flashcards available for this deck. Restart the app!"),
+    );
+  }
+  
+  final currentFlashcard = flashcards[currentIndex];
+  final totalFlashcards = flashcards.length;
+
+  
+  return Scaffold(
+      appBar: AppBar(
+        title: Text('Flashcard Quiz'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.replay),
+            onPressed: () {
+              setState(() {
+                currentIndex = 0;
+                showAnswer = false;
+                peakedFlashcards.clear();
+                seenFlashcards =1;
+                //each time quiz is replayed the flashcards are shuffled
+                flashcards.shuffle();
+              });
+            },
+          ),
+        ],
+      ),
+      body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+         Card(
+           child: Container(
+           color: showAnswer ? const Color.fromARGB(255, 82, 76, 235) : const Color.fromARGB(255, 159, 202, 224),
+           width: 300, 
+           height: 200, 
+           child: Column(
+           mainAxisAlignment: MainAxisAlignment.center,
+           children: [
+            ListTile(
+              title: showAnswer ? Center(child: Text(currentFlashcard.answer, style: const TextStyle(fontSize: 36),)) :  Center (child: Text(currentFlashcard.question, style: const TextStyle(fontSize: 36),),),
+            ),
+          ],
+        ),
+      ),
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+            IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => _previousFlashcard(),
+            ),
+            IconButton(
+              icon: Icon(showAnswer ? Icons.replay : Icons.remove_red_eye),
+              onPressed: (){
+                setState(() {
+                        showAnswer =!showAnswer;
+                        if(!peakedFlashcards.contains(currentIndex)){
+                          peakedFlashcards.add(currentIndex);
+                        }
+                      });  
+              }
+            ),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: () => _nextFlashcard(),
+            ),
+          ],
+        ),
+        Text('Seen $seenFlashcards of $totalFlashcards cards'),
+        Text('Peaked ${peakedFlashcards.length} of $seenFlashcards'),
+      ],
+    ),
+  );
+}
+}

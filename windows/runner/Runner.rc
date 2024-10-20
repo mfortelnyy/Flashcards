@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "flashcradb" "\0"
+            VALUE "FileDescription", "mp3" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "flashcradb" "\0"
+            VALUE "InternalName", "mp3" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "flashcradb.exe" "\0"
-            VALUE "ProductName", "flashcradb" "\0"
+            VALUE "OriginalFilename", "mp3.exe" "\0"
+            VALUE "ProductName", "mp3" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

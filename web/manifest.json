@@ -1,6 +1,6 @@
 {
-    "name": "flashcradb",
-    "short_name": "flashcradb",
+    "name": "mp3",
+    "short_name": "mp3",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
